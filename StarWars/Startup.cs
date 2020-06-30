@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using StarWars.Data;
+using StarWars.Model;
 
 namespace StarWars
 {
@@ -26,6 +29,13 @@ namespace StarWars
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDbContext<StarWarsContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("StarWarsContext")));
+
+            StarWarsContext starWarsContext = services.BuildServiceProvider().GetService<StarWarsContext>();
+
+            services.AddScoped<IRepository<Character>, Repository<Character>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

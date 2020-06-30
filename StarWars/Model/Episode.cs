@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 
 namespace StarWars.Model
 {
-    public class Character
+    public class Episode
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
-        public Episode[] Episodes { get; set; }
-        public Character[] Friends { get; set; }
     }
 }
