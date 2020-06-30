@@ -22,8 +22,14 @@ namespace StarWars.Controllers
         }
 
         // GET: api/Characters
+        [Route("Paged")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Character>>> GetCharacter()
+        public async Task<ActionResult<IEnumerable<Character>>> GetCharactersPaged(int pageSize = 5, int pageNumber = 0)
+        {
+            return (await repository.ReadAll()).Skip(pageNumber * pageSize).Take(pageSize).ToList();
+        }
+
+        public async Task<ActionResult<IEnumerable<Character>>> GetCharacters()
         {
             return (await repository.ReadAll()).ToList();
         }

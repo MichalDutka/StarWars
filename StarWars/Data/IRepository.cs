@@ -14,7 +14,7 @@ namespace StarWars
 
         Task<T> Read(int id);
 
-        Task Update(int id, T entity);
+        Task<T> Update(int id, T entity);
 
         Task<T> Delete(int id);
 
