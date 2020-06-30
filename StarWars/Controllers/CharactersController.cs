@@ -14,9 +14,9 @@ namespace StarWars.Controllers
     [ApiController]
     public class CharactersController : ControllerBase
     {
-        private readonly Repository<Character> repository;
+        private readonly IRepository<Character> repository;
 
-        public CharactersController(Repository<Character> repository)
+        public CharactersController(IRepository<Character> repository)
         {
             this.repository = repository;
         }
@@ -48,14 +48,15 @@ namespace StarWars.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCharacter(int id, Character character)
         {
-            if (id != character.Id)
-            {
-                return BadRequest();
-            }
+            character.Id = id;
 
             try
             {
                 await repository.Update(id, character);
+            }
+            catch (ArgumentException)
+            {
+                BadRequest();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -94,7 +95,6 @@ namespace StarWars.Controllers
             }
 
             return character;
-        }
         }
     }
 }

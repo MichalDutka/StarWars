@@ -9,8 +9,8 @@ namespace StarWars.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
-        public Episode[] Episodes { get; set; }
-        public Character[] Friends { get; set; }
+        public string Planet { get; set; }
+        public string[] Episodes { get; set; }
+        public string[] Friends { get; set; }
     }
 }

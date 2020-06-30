@@ -10,10 +10,10 @@ namespace StarWars
 {
     public class Repository<T> : IRepository<T>, IDisposable where T : class
     {
-        private readonly DbContext dbContext;
+        private readonly StarWarsContext dbContext;
 
 
-        public Repository(DbContext dbContext)
+        public Repository(StarWarsContext dbContext)
         {
             this.dbContext = dbContext;
         }
@@ -38,7 +38,8 @@ namespace StarWars
         }
 
         public async Task Update(int id, T entity)
-        {
+        {           
+
             dbContext.Set<T>().Update(entity);
 
             await dbContext.SaveChangesAsync();

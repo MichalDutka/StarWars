@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StarWars
 {
-    interface IRepository<T> where T : class
+    public interface IRepository<T> where T : class
     {
         Task<T> Create(T entity);
 
