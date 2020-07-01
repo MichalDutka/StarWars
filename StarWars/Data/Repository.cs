@@ -40,7 +40,6 @@ namespace StarWars
         public async Task<T> Update(int id, T entity)
         {         
             T item = dbContext.Set<T>().Update(entity).Entity;
-
             await dbContext.SaveChangesAsync();
 
             return item;

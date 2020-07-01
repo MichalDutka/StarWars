@@ -72,13 +72,8 @@ namespace StarWars.Test
                 }
             };
 
-            DbContextOptions<StarWarsContext> options = new DbContextOptionsBuilder<StarWarsContext>().UseInMemoryDatabase("TestCreate").Options;
-
-            using (StarWarsContext context = new StarWarsContext(options))
+            using (StarWarsContext context = await CreateContext("TestCreate"))
             {
-                context.Set<Character>().AddRange(characters);
-                await context.SaveChangesAsync();
-
                 Repository<Character> repository = new Repository<Character>(context);
 
                 Character result = await repository.Create(newCharacter);
@@ -93,13 +88,8 @@ namespace StarWars.Test
         [TestMethod]
         public async Task TestReadAll()
         {
-            DbContextOptions<StarWarsContext> options = new DbContextOptionsBuilder<StarWarsContext>().UseInMemoryDatabase("TestReadAll").Options;
-
-            using (StarWarsContext context = new StarWarsContext(options))
+            using (StarWarsContext context = await CreateContext("TestReadAll"))
             {
-                context.Set<Character>().AddRange(characters);
-                await context.SaveChangesAsync();
-
                 Repository<Character> repository = new Repository<Character>(context);
 
                 List<Character> result = (await repository.ReadAll()).ToList();
@@ -113,13 +103,8 @@ namespace StarWars.Test
         [TestMethod]
         public async Task TestRead()
         {
-            DbContextOptions<StarWarsContext> options = new DbContextOptionsBuilder<StarWarsContext>().UseInMemoryDatabase("TestRead").Options;
-
-            using (StarWarsContext context = new StarWarsContext(options))
+            using (StarWarsContext context = await CreateContext("TestRead"))
             {
-                context.Set<Character>().AddRange(characters);
-                await context.SaveChangesAsync();
-
                 Repository<Character> repository = new Repository<Character>(context);
 
                 Character result = await repository.Read(1);
@@ -134,13 +119,8 @@ namespace StarWars.Test
             Character updatedCharacter = characters[0];
             updatedCharacter.Name = "Lucas Skywalker";
 
-            DbContextOptions<StarWarsContext> options = new DbContextOptionsBuilder<StarWarsContext>().UseInMemoryDatabase("TestUpdate").Options;
-
-            using (StarWarsContext context = new StarWarsContext(options))
+            using (StarWarsContext context = await CreateContext("TestUpdate"))
             {
-                context.Set<Character>().AddRange(characters);
-                await context.SaveChangesAsync();
-
                 Repository<Character> repository = new Repository<Character>(context);
 
                 Character result = await repository.Update(1, updatedCharacter);
@@ -152,14 +132,9 @@ namespace StarWars.Test
 
         [TestMethod]
         public async Task TestDelete()
-        {
-            DbContextOptions<StarWarsContext> options = new DbContextOptionsBuilder<StarWarsContext>().UseInMemoryDatabase("TestDelete").Options;
-
-            using (StarWarsContext context = new StarWarsContext(options))
+        {       
+            using (StarWarsContext context = await CreateContext("TestDelete"))
             {
-                context.Set<Character>().AddRange(characters);
-                await context.SaveChangesAsync();
-
                 Repository<Character> repository = new Repository<Character>(context);
 
                 Character result = await repository.Delete(2);
@@ -167,6 +142,18 @@ namespace StarWars.Test
                 Assert.AreEqual(1, context.Set<Character>().Count());
                 Assert.AreEqual(characters[1], result);
             }
+        }
+
+        private async Task<StarWarsContext> CreateContext(string databaseName)
+        {
+            DbContextOptions<StarWarsContext> options = new DbContextOptionsBuilder<StarWarsContext>().UseInMemoryDatabase(databaseName).Options;
+
+            StarWarsContext context = new StarWarsContext(options);
+
+            context.Set<Character>().AddRange(characters);
+            await context.SaveChangesAsync();
+
+            return context;
         }
     }
 }
