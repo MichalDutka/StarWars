@@ -1,4 +1,4 @@
-#Star Wars
+# Star Wars
 Create "Star Wars" RESTful API service. Implement CRUD (Create, Read, Update, Delete) operations for managing 'Star Wars' characters. Persistence layer should be implemented using some ORM and relational database.
 Start with something simple (e.g. create enpoint that will return hardcoded list of characters) and progressively enhance the service. Try to use best practices and architecture patterns (e.g. SOLID principle, clean architecture).
 
