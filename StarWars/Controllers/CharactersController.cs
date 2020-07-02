@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using StarWars.DTO;
+using StarWars.Model;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using StarWars.Data;
-using StarWars.Model;
 
 namespace StarWars.Controllers
 {
@@ -22,24 +20,27 @@ namespace StarWars.Controllers
         }
 
         // GET: api/Characters
-        public async Task<ActionResult<IEnumerable<Character>>> GetCharacters()
+        public async Task<ActionResult<IEnumerable<CharacterDTO>>> GetCharacters()
         {
-            return (await repository.ReadAll()).ToList();
+            return (await repository.ReadAll()).Select(c => new CharacterDTO(c)).ToList();
         }
 
         // GET: api/Characters/Paged
         [Route("Paged")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Character>>> GetCharactersPaged(int pageSize = 5, int pageNumber = 0)
+        public async Task<ActionResult<IEnumerable<CharacterDTO>>> GetCharactersPaged(int pageSize = 5, int pageNumber = 0)
         {
-            return (await repository.ReadAll()).Skip(pageNumber * pageSize).Take(pageSize).ToList();
+            return (await repository.ReadAll())
+                .Skip(pageNumber * pageSize)
+                .Take(pageSize)
+                .Select(c => new CharacterDTO(c)).ToList();
         }
 
         // GET: api/Characters/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Character>> GetCharacter(int id)
+        public async Task<ActionResult<CharacterDTO>> GetCharacter(int id)
         {
-            var character = await repository.Read(id);
+            CharacterDTO character = new CharacterDTO(await repository.Read(id));
 
             if (character == null)
             {
@@ -53,28 +54,20 @@ namespace StarWars.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCharacter(int id, Character character)
+        public async Task<IActionResult> PutCharacter(int id, CharacterDTO characterDTO)
         {
-            character.Id = id;
+            Character character = new Character(characterDTO)
+            {
+                Id = id
+            };
 
             try
             {
-                await repository.Update(id, character);
-            }
-            catch (ArgumentException)
-            {
-                BadRequest();
+                await repository.Update(character);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await repository.Exists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -84,24 +77,29 @@ namespace StarWars.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Character>> PostCharacter(Character character)
+        public async Task<ActionResult<CharacterDTO>> PostCharacter(CharacterDTO characterDTO)
         {
-            await repository.Create(character);
+            Character character = new Character(characterDTO);
 
-            return CreatedAtAction("GetCharacter", new { id = character.Id }, character);
+            CharacterDTO updatedCharacterDTO = new CharacterDTO(await repository.Create(character));
+
+            return CreatedAtAction("GetCharacter", new { id = character.Id }, updatedCharacterDTO);
         }
 
         // DELETE: api/Characters/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Character>> DeleteCharacter(int id)
+        public async Task<ActionResult<CharacterDTO>> DeleteCharacter(int id)
         {
-            var character = await repository.Delete(id);
+            Character character = await repository.Delete(id);
+
             if (character == null)
             {
                 return NotFound();
             }
 
-            return character;
+            CharacterDTO characterDTO = new CharacterDTO(character);
+
+            return characterDTO;
         }
     }
 }

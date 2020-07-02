@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using StarWars.Data;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace StarWars
@@ -37,8 +35,8 @@ namespace StarWars
             return await dbContext.Set<T>().FindAsync(id);
         }
 
-        public async Task<T> Update(int id, T entity)
-        {         
+        public async Task<T> Update(T entity)
+        {
             T item = dbContext.Set<T>().Update(entity).Entity;
             await dbContext.SaveChangesAsync();
 
@@ -57,12 +55,6 @@ namespace StarWars
             dbContext.SaveChanges();
 
             return item;
-        }
-
-
-        public async Task<bool> Exists(int id)
-        {
-            return await dbContext.Set<T>().FindAsync(id) != null;
         }
 
         public void Dispose() { }

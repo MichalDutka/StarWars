@@ -1,7 +1,4 @@
-﻿using StarWars.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace StarWars
@@ -14,10 +11,8 @@ namespace StarWars
 
         Task<T> Read(int id);
 
-        Task<T> Update(int id, T entity);
+        Task<T> Update(T entity);
 
         Task<T> Delete(int id);
-
-        Task<bool> Exists(int id);
     }
 }
